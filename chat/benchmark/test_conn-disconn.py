@@ -52,7 +52,7 @@ def websocket_client():
 
 
 def main():
-    connections = 16
+    connections = 2
     with concurrent.futures.ProcessPoolExecutor() as executor:
         [executor.submit(websocket_client) for _ in range(connections)]
 

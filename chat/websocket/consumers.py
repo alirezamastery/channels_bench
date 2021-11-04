@@ -4,6 +4,7 @@ from colored import fg, attr
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from utils.logging import logger, plogger
 
 
 RESET = attr('reset')
@@ -15,8 +16,8 @@ class ChatConsumer(WebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f'chat_{self.room_name}'
 
-        print(fg('green'), 'connect start', RESET)
-        time.sleep(2)
+        logger('CONNECT START', color='green')
+        time.sleep(20)
 
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
@@ -25,7 +26,7 @@ class ChatConsumer(WebsocketConsumer):
         )
 
         self.accept()
-        print(fg('red'), 'connect start', RESET)
+        logger('CONNECT END', color='green')
 
     def disconnect(self, close_code):
         # Leave room group
@@ -38,7 +39,7 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(message)
+        plogger(text_data_json, color='yellow')
 
         # Send message to room group
         async_to_sync(self.channel_layer.group_send)(
